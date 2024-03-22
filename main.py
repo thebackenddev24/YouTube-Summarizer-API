@@ -38,20 +38,24 @@ def summarize_youtube():
 
         return jsonify(result)
     except Exception as e:
-        return str(e), 500
+        error_msg = str(e)
+        print("Error:", error_msg)
+        return jsonify({"error": error_msg}), 500
 
-@app.route('/', methods=['GET'])
+@app.route('/today_summary', methods=['GET'])
 def today_summary():
     try:
         # Placeholder for the logic to retrieve today's summary
         summary = "Today's summary goes here."
         return jsonify({"summary": summary})
     except Exception as e:
-        return str(e), 500
+        error_msg = str(e)
+        print("Error:", error_msg)
+        return jsonify({"error": error_msg}), 500
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return "The requested URL was not found on the server.", 404
+    return jsonify({"error": "The requested URL was not found on the server."}), 404
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
