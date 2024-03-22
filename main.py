@@ -21,7 +21,7 @@ def summarize_youtube():
         validation_errors = validate_params(data)
         if validation_errors:
             return jsonify({"error": validation_errors}), 400
-
+        
         client = Client("https://prakhardoneria-summarize-youtube.hf.space/")
         result = client.predict(
             data.get('youtube_url', ''),
@@ -38,20 +38,20 @@ def summarize_youtube():
 
         return jsonify(result)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return str(e), 500
 
 @app.route('/', methods=['GET'])
 def today_summary():
     try:
-        
-        summary = "Let's summaries something"
+        # Placeholder for the logic to retrieve today's summary
+        summary = "Today's summary goes here."
         return jsonify({"summary": summary})
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return str(e), 500
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return jsonify({"error": "The requested URL was not found on the server."}), 404
+    return "The requested URL was not found on the server.", 404
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
