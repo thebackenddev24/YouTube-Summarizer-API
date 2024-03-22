@@ -14,22 +14,37 @@ def validate_params(data):
             errors.append("Summary length must be between 100 and 500.")
     return errors
 
-@app.route('/summarise', methods=['POST'])
+@app.route('/summarise', methods=['GET'])
 def summarize_youtube():
     try:
-        data = request.json
+        youtube_url = request.args.get('youtube_url')
+        transcribe = request.args.get('transcribe', type=bool, default=False)
+        api_token = request.args.get('api_token', default='')
+        generation_temperature = request.args.get('generation_temperature', type=float, default=0.5)
+        summary_length = request.args.get('summary_length', type=int, default=300)
+        set_temperature = request.args.get('set_temperature', type=bool, default=True)
+
+        data = {
+            'youtube_url': youtube_url,
+            'transcribe': transcribe,
+            'api_token': api_token,
+            'generation_temperature': generation_temperature,
+            'summary_length': summary_length,
+            'set_temperature': set_temperature
+        }
+
         validation_errors = validate_params(data)
         if validation_errors:
             return jsonify({"error": validation_errors}), 400
         
         client = Client("https://prakhardoneria-summarize-youtube.hf.space/")
         result = client.predict(
-            data.get('youtube_url', ''),
-            data.get('transcribe', False),
-            data.get('api_token', ''),  # Adding empty string as default value for missing token
-            data.get('generation_temperature', 0.5),
-            data.get('summary_length', 300),
-            data.get('set_temperature', True),
+            youtube_url,
+            transcribe,
+            api_token,
+            generation_temperature,
+            summary_length,
+            set_temperature,
             api_name="/summarize_youtube_video"
         )
 
@@ -42,7 +57,7 @@ def summarize_youtube():
         print("Error:", error_msg)
         return jsonify({"error": error_msg}), 500
 
-@app.route('/today_summary', methods=['GET'])
+@app.route('/', methods=['GET'])
 def today_summary():
     try:
         # Placeholder for the logic to retrieve today's summary
